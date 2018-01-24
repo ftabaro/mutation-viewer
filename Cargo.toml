@@ -1,0 +1,7 @@
+[package]
+name = "rusty_vcf"
+version = "0.1.0"
+authors = ["Francesco Tabaro <francesco.tabaro@gmail.com>"]
+
+[dependencies]
+rouille = "1.0.3"

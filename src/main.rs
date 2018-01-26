@@ -1,20 +1,23 @@
 #[macro_use]
 extern crate rouille;
 
+#[macro_use]
+extern crate horrorshow;
+
+mod index;
+
 use rouille::{Request, Response, start_server};
-use std::fs::{File, read_dir};
+//use std::fs::{File, read_dir};
 
 const PORT: &'static str = "8080";
 const URL: &'static str = "localhost";
 
-// fn buildString(s:str) -> String { &s[..] }
+// fn buildString(s: &str) -> String { &s[..] }
 
 fn main () {
 
-    // let port = buildString(PORT);
-    // let url = buildString(URL);
-    let port = &PORT[..];
-    let url = &URL[..];
+    let port: &str = &PORT[..];
+    let url: &str = &URL[..];
 
     let addr = format!("{}:{}", url, port);
 
@@ -25,14 +28,16 @@ fn main () {
         router!(request,
             (GET)(/) => {
 
-                let paths = read_dir("../data").unwrap();
-                println!("{:?}",paths);
-                for path in paths {
-                    println!("{:?}", path.unwrap().path())
-                }
+                // let paths = read_dir("../data").unwrap();
 
-                let file = File::open("../assets/index.html").unwrap();
-                Response::from_file("text/html", file)
+                // println!("{:?}",paths);
+                // for path in paths {
+                //    println!("{:?}", path.unwrap().path())
+                // }
+
+                //let file = File::open("../assets/index.html").unwrap();
+
+                Response::html(index::index())
             },
 
             (GET)(/{dataset: String}/{vcf: String}/mutations) => {

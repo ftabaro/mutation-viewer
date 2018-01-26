@@ -2,29 +2,41 @@
 extern crate rouille;
 
 use rouille::{Request, Response, start_server};
-use std::net::{ToSocketAddrs, SocketAddr};
+use std::fs::{File, read_dir};
 
-const URL: String = "localhost".into(); // same as URL: String = String::from("localhost");
-const PORT: String = "8080".into();
+const PORT: &'static str = "8080";
+const URL: &'static str = "localhost";
+
+// fn buildString(s:str) -> String { &s[..] }
 
 fn main () {
 
-    let addr = format!("{}:{}", URL, PORT);
+    // let port = buildString(PORT);
+    // let url = buildString(URL);
+    let port = &PORT[..];
+    let url = &URL[..];
+
+    let addr = format!("{}:{}", url, port);
 
     println!("Server listening at {}", &addr);
 
-    start_server(addr, move |request: Request| {
+    start_server(addr, move |request| {
 
         router!(request,
             (GET)(/) => {
-                println!("{:?}", &request);
-                {
-                    rouille::match_assets(&request, "../assets");
+
+                let paths = read_dir("../data").unwrap();
+                println!("{:?}",paths);
+                for path in paths {
+                    println!("{:?}", path.unwrap().path())
                 }
-                Response::empty_404()
+
+                let file = File::open("../assets/index.html").unwrap();
+                Response::from_file("text/html", file)
             },
 
-            (GET)(/{dataset}/{vcf}/mutations) => {
+            (GET)(/{dataset: String}/{vcf: String}/mutations) => {
+                println!("{}/{}",&dataset, &vcf);
                 Response::text("this is the view page")
             },
 
@@ -34,8 +46,6 @@ fn main () {
 
             _ => Response::empty_404()
         )
-
     });
-
 }
 

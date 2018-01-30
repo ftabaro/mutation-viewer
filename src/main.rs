@@ -7,10 +7,17 @@ extern crate horrorshow;
 use horrorshow::prelude::*;
 use horrorshow::helper::doctype;
 
-use std::fs::read_dir;
+use std::fs::{read_dir, ReadDir};
+use std::path::Path;
 
 const PORT: &'static str = "8080";
 const URL: &'static str = "localhost";
+
+fn do_read_dir(p: &Path) -> ReadDir {
+    read_dir(p).unwrap()
+}
+
+struct dataset_struct {}
 
 fn main () {
 
@@ -26,14 +33,13 @@ fn main () {
         router!(request,
             (GET)(/) => {
 
-                let paths = read_dir("/home/ftabaro/IdeaProjects/RustyVCF/data").unwrap();
-//                let mut available_datasets = HashMap::new();
+                let paths = do_read_dir(Path::new("/home/ftabaro/IdeaProjects/RustyVCF/data"));
 
                 for path in paths {
-                    let p = path.unwrap().path();
-                    let files = read_dir(&p.to_str().unwrap()).unwrap();
+                    let unwrapped_path = path.unwrap();
+                    let files = do_read_dir(&unwrapped_path.path());
                     for file in files {
-                        println!("{}\t{}", &p.display(), &file.unwrap().path().display())
+                        println!("{}\t{}", &unwrapped_path.file_name().into_string().unwrap(), file.unwrap().path().display())
                     }
                 }
 

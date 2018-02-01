@@ -1,0 +1,289 @@
+body {
+    font-size: 14px;
+    font-family: sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+table {
+    display: table;
+    font-size: 12px;
+    white-space: nowrap;
+    border-collapse: collapse;
+    margin: 100px 0 0 0;
+    table-layout: fixed;
+    width: 1px;
+}
+
+tr {
+    border-bottom: 1px solid gray;
+}
+
+th, td {
+    width: auto;
+    text-align: left;
+    overflow: hidden;
+    padding: 1px 5px;
+}
+
+th {
+    border: none;
+}
+
+td {
+    border-right: 1px solid gray;
+}
+
+td:nth-of-type(1), th:nth-of-type(1) {
+    width: 50px;
+}
+
+td:nth-of-type(2), th:nth-of-type(2) {
+    width: 80px;
+}
+
+td:nth-of-type(3), th:nth-of-type(3) {
+    width: 100px;
+}
+
+td:nth-of-type(4), th:nth-of-type(4) {
+    width: 100px;
+}
+
+td:nth-of-type(5), th:nth-of-type(5) {
+    width: 100px;
+}
+
+td:nth-of-type(6), th:nth-of-type(6) {
+    width: 240px;
+}
+
+td:nth-of-type(7), th:nth-of-type(7) {
+    width: 240px;
+}
+
+td:nth-of-type(8), th:nth-of-type(8) {
+    width: 240px;
+}
+
+td:nth-of-type(9), th:nth-of-type(9) {
+    width: 100px;
+}
+
+td:nth-of-type(10), th:nth-of-type(10) {
+    width: 200px;
+}
+
+tr:hover td {
+    background-color: #edf4ff;
+}
+
+th.sample {
+    overflow: visible;
+    padding: 0;
+    transform: translate(5px, -5px) rotate(-45deg);
+}
+
+#options {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+#controls {
+    position: fixed;
+    padding: .1em;
+    color: black;
+    background: #fff;
+    white-space: nowrap;
+    box-shadow: 7px 7px 10px #A0A0A0;
+    border: 1px solid #A0A0A0;
+}
+
+.context-menu__items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.context-menu__item {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.context-menu__item:last-child {
+    margin-bottom: 0;
+}
+
+.context-menu__link {
+    display: block;
+    padding: .2em .5em;
+    color: #0066aa;
+    text-decoration: none;
+}
+
+.context-menu__link:hover {
+    color: #fff;
+    background-color: #0066aa;
+}
+
+tr.new {
+    background: #ffffe0;
+}
+
+tr.blacklisted {
+    background: #ddd;
+}
+
+.hidden {
+    display: none !important;
+}
+
+tr.selected td {
+    background: #edf4ff
+}
+
+.overlay-background {
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.fade-in {
+    -webkit-animation: fadein 1s;
+    -moz-animation: fadein 1s;
+    -ms-animation: fadein 1s;
+    -o-animation: fadein 1s;
+    animation: fadein 1s;
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@-moz-keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@-ms-keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@-o-keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.overlay-content {
+    width: 90%;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.overlay-background a {
+    padding: 2px;
+    text-decoration: none;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+.overlay-background svg {
+    margin: auto;
+    background-color: white
+}
+
+.overlay-background a:hover, .overlay-background a:focus {
+    color: #f1f1f1;
+}
+
+.overlay-background .closebtn {
+    float: right;
+    padding: .5em;
+    font-size: 36px;
+}
+
+@media screen and ( max-height: 450px ) and ( max-width: 450px ) {
+    .overlay-background a {
+        font-size: 20px
+    }
+
+    .overlay-background .closebtn {
+        font-size: 20px;
+    }
+}
+
+a.close {
+    padding: 2px;
+    text-decoration: none;
+    color: #818181;
+    display: inline-block;
+    transition: 0.3s;
+    vertical-align: top;
+}
+
+a.close:hover, a.close:focus {
+    color: #b21b21;
+}
+
+.bar {
+    stroke: black;
+    opacity: 0.8
+}
+
+rect.bar.barplot-selected {
+    fill: red !important;
+}
+
+text.barplot-selected {
+    font-weight: bolder !important;
+    fill: black !important;
+}
+
+.grid line {
+    stroke: lightgrey;
+    stroke-opacity: 0.7;
+    shape-rendering: crispEdges;
+}
+
+.grid path {
+    stroke-width: 0;
+}

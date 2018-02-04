@@ -5,4 +5,4 @@ authors = ["Francesco Tabaro <francesco.tabaro@gmail.com>"]
 
 [dependencies]
 rouille = "1.0.3"
-horrorshow = "0.6.2"
+flate2 = "1.0.1"

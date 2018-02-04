@@ -143,9 +143,9 @@ text.barplot-selected { font-weight: bolder !important; fill: black !important; 
 
 <script type='text/javascript'>{{xlsx_lib}}</script>
 <script type='text/javascript'>{{d3_lib}}</script>
-<script type='text/javascript'>let vcf=`{{vcf_data}}`</script>
-<script type='text/javascript'>let blacklist=`{{blacklist_data}}`</script>
-<script type='text/javascript'>let whitelist=`{{whitelist_data}}`</script>
+<script type='text/javascript'>let _VCF=`{{vcf_data}}`</script>
+<script type='text/javascript'>let _BLACKLIST=`{{blacklist_data}}`</script>
+<script type='text/javascript'>let _WHITELIST=`{{whitelist_data}}`</script>
 <script type='text/javascript'>
 
 function $(id) { return document.getElementById(id); }
@@ -474,19 +474,19 @@ function clear_control () {
 }
 
 // function init (resolved) {
-function init (resolved) {
+function init () {
 
 	// assign resolved values
 	// let VCF = resolved[0];
 	// let Whitelist = resolved[1];
 	// let Blacklist = resolved[2];
-	let VCF = vcf;
-	let Whitelist = whitelist;
-	let Blacklist = blacklist;
+	let Vcf = parse_tsv(_VCF);
+	let Whitelist = _WHITELIST;
+	let Blacklist = _BLACKLIST;
 
 	// parse data
 	headers = ['CHROM', 'POSITION', 'REF', 'ALT', 'GENE', 'EFFECT', 'NOTES', 'SAMPLE', 'FREQ'];
-	orig_mutations = preprocess_data(VCF);
+	orig_mutations = preprocess_data(Vcf);
 
 	// parse whitelist
 	whitelist = {};
@@ -500,7 +500,7 @@ function init (resolved) {
 
 	// parse blacklist
 	blacklist = {};
-	let lines = Blacklist.split('\n');
+	lines = Blacklist.split('\n');
 	for (let k = 0; k < lines.length; k++) {
 		if (lines[k] === '') continue;
 		let cols = lines[k].split('\t');
@@ -535,11 +535,12 @@ function show_barplot () {
 		.attr('height', height2)
 		.node();
 
+    let data;
 	if (selected_mutation) {
-		let data = selected_mutation['plot_data'];
+        data = selected_mutation['plot_data'];
 	} else {
 		let idx = parseInt($('info').innerHTML);
-		let data = mutations[idx]['plot_data'];
+		data = mutations[idx]['plot_data'];
 		selected_mutation = mutations[idx];
 	}
 

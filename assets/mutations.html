@@ -339,9 +339,9 @@ function render_table() {
 	 	let tr = e.target;
 
 	 	if (e.altKey) {
-	 		mark_seen_letiant(e);
+	 		mark_seen_variant(e);
 	 	} else if (e.ctrlKey) {
-	 		blacklist_letiant(e);
+	 		blacklist_variant(e);
 	 	}
 	 	e.preventDefault(); return false;
 	 });
@@ -424,7 +424,7 @@ function get_row(event) {
 	return target_element
 }
 
-function mark_seen_letiant(event) {
+function mark_seen_variant(event) {
 
 	// Update DOM and get data
 	let tr = get_row(event);
@@ -441,7 +441,7 @@ function mark_seen_letiant(event) {
 	else whitelist[signature] = true;
 }
 
-function blacklist_letiant(event) {
+function blacklist_variant(event) {
 
 	// get DOM element and data
 	let tr = get_row(event);
@@ -458,6 +458,7 @@ function blacklist_letiant(event) {
 	// Update blacklist on server
 	let d = { file: '{{blacklist}}', updates: {} };
 	d['updates'][signature] = now_blacklisted;
+	console.log(d);
 	post_json('/update_mutation_blacklist', d);
 }
 
@@ -904,8 +905,8 @@ function onresize () {
 	$('show_blacklisted').addEventListener('click', render_table);
 	$('export_xls').addEventListener('click', export_xls);
 	$('igv_button').addEventListener('click', trigger_igv);
-	$('blacklist_button').addEventListener('click', blacklist_letiant);
-	$('seen_button').addEventListener('click', mark_seen_letiant);
+	$('blacklist_button').addEventListener('click', blacklist_variant);
+	$('seen_button').addEventListener('click', mark_seen_variant);
 	$('bplot_button').addEventListener('click', show_barplot);
 
 })()

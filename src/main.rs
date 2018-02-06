@@ -10,23 +10,57 @@ extern crate serde;
 extern crate serde_json;
 
 extern crate flate2;
+
+extern crate docopt;
+
+use docopt::{Docopt, ArgvMap};
+
 use flate2::bufread::GzDecoder;
 
 use io::{Result, Error, ErrorKind};
-use std::fs::{read_dir, canonicalize, File};
+use std::fs::{read_dir, canonicalize, File, remove_file};
 use std::path::{Path, PathBuf};
 use std::io;
 use std::io::prelude::*;
 use std::env::current_dir;
+use std::process::exit;
 
 const PORT: &str = "8080";
 const URL: &str = "localhost";
 const DATA_PATH: &str = "./data/";
 const ASSETS_PATH: &str = "./assets/";
 
+const USAGE: &str = "
+Usage:
+    vcfviewer [options] <data_path>
+
+Options:
+    --port      Port to listen for HTTP requests [default: 8080]
+    --address   Address to use for listening for HTTP requests [default: localhost]
+    --assets    Path to folder with assets static files [default: ./assets]
+";
+
 struct Dataset {
     name: String,
     vcf: Vec<String>,
+}
+
+#[derive(Deserialize, Debug)]
+struct Json {
+    file: String,
+    target_list: String,
+    signature: String,
+    active: bool,
+}
+
+fn parse_args(usage: &str) -> ArgvMap {
+    match Docopt::new(usage).unwrap().parse() {
+        Ok(argv) => return argv,
+        Err(e) => {
+            eprintln!("{}", &format!("Invalid arguments.\n{}", usage));
+            exit(-1)
+        }
+    }
 }
 
 fn get_datasets(dir: &str) -> Result<Vec<Dataset>> {
@@ -178,6 +212,16 @@ fn build_mutation_template(root: &String) -> String {
     html
 }
 
+fn write_file(file_path: PathBuf, buf: String) -> Result<()> {
+    let mut p = check_absolute_path(DATA_PATH);
+    p.push(file_path);
+    remove_file(p.as_path())?;
+    let mut file = File::create(p.as_path())?;
+    file.write_all(buf.as_bytes())?;
+    file.flush()?;
+    Ok(())
+}
+
 // HANDLERS
 
 fn handle_index() -> Response {
@@ -194,19 +238,48 @@ fn handle_viewer(dataset: String, vcf: String) -> Response {
     Response::html(build_mutation_template(&root))
 }
 
-#[derive(Deserialize, Debug)]
-struct Json {
-    a: String,
-    b: u32
-}
-
 fn handle_post(request: &Request) -> Response {
-        let json: Json = try_or_400!(json_input(request));
-    println!("{:?}", json);
-    Response::text("post to update_blacklist")
+    let json: Json = try_or_400!(json_input(request));
+
+    let list_file = load_data(&json.file, &format!("{}.tsv", json.target_list));
+    let mut list: Vec<String> = list_file.lines()
+        .map(|x| x.split_terminator("\t").collect::<Vec<&str>>().join(":"))
+        .collect();
+
+    match &list.iter().position(|x| x == &json.signature) {
+        &Some(idx) => {
+            println!("Found {:?} at {:?}", &json.signature, &idx);
+            if !json.active {
+                list.remove(idx);
+                println!("Removed {}", &json.signature)
+            }
+        }
+        &None => {
+            println!("Not Found {:?}", &json.signature);
+            if json.active {
+                println!("Added new {}", &json.signature);
+                list.push(json.signature);
+            }
+        }
+    }
+
+    match write_file(PathBuf::from(format!("{}.{}.tsv", json.file, json.target_list)),
+                     list.iter()
+                         .map(|x| x.replace(":", "\t"))
+                         .collect::<Vec<String>>()
+                         .join("\n")) {
+        Ok(_) => return Response::text("").with_status_code(200),
+        Err(e) => {
+            eprintln!("{:?}", e);
+            return Response::text("").with_status_code(500);
+        }
+    };
 }
 
 fn main() {
+    let args = parse_args(USAGE);
+
+
     let addr: String = format!("{}:{}", URL, PORT);
     println!("Server listening at {}", &addr);
     start_server(addr, move |request| {

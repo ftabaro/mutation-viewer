@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head>
-    <title>Betastasis</title>
-    <link rel='icon' type='image/png' href='/images/favicon.png'/>
+    <title>VCF Viewer</title>
+    <!--<link rel='icon' type='image/png' href='/images/favicon.png'/>-->
 </head>
 <body>
 <div id='options'>
@@ -357,16 +357,16 @@
     let blacklist = undefined;
     let whitelist = undefined;
 
-    function download(url) {
-        return new Promise(function (resolve, reject) {
-            let request = new XMLHttpRequest();
-            request.open('GET', url, true);
-            request.onload = function () {
-                if (this.status === 200) resolve(this.response);
-            };
-            request.send();
-        })
-    }
+    // function download(url) {
+    //     return new Promise(function (resolve, reject) {
+    //         let request = new XMLHttpRequest();
+    //         request.open('GET', url, true);
+    //         request.onload = function () {
+    //             if (this.status === 200) resolve(this.response);
+    //         };
+    //         request.send();
+    //     })
+    // }
 
     function post_json(url, data, success_handler) {
         let request = new XMLHttpRequest();

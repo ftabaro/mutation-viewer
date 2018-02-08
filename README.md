@@ -18,10 +18,10 @@ Options:
  
 ```bash
 data
-├── Abi-enza crossover
-│   ├── another_test.vcf
+├── dataset 1
+│   ├── rare.vcf
 │   └── somatic.vcf.gz
-└── ind232
+└── dataset 2
     ├── rare.vcf.gz
     └── somatic.vcf.gz
 ```

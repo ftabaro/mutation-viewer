@@ -4,17 +4,17 @@ The program starts an HTTP server listening on the given port of the given url. 
 
 ### Usage ###
 
-```
+```bash
 $ vcfviewer [options] <data_path>
 ```
 
-```
+```bash
 Options:
     --port=N        Port to listen for HTTP requests [default: 8080]
     --address=H     Address to use for listening for HTTP requests [default: localhost]
 ```
 
- `vcfviewer` expect the data folder to have a specific structure:
+ `vcfviewer` expect the data folder to have a specific structure (whitespaces in dataset names are supported):
  
 ```bash
 data
@@ -31,6 +31,6 @@ data
 
 `vcfviewer` can be compiled from source using the `cargo` build system. For example:
 
-```
+```bash
 $ cargo build
 ```

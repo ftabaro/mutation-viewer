@@ -3,6 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <title>Vcf Viewer</title>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 1vw;
+        }
+
+        #top-container {
+            width: 100%;
+        }
+
+        #list-container {
+            column-count: 4;
+            column-gap: 0;
+        }
+
+        .dataset {
+            -webkit-column-break-inside: avoid; /* Chrome, Safari, Opera */
+            page-break-inside: avoid; /* Firefox */
+            break-inside: avoid; /* IE 10+ */
+            padding: 1vw;
+            margin: .5em 0;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+
+        }
+
+        .dataset > span {
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 <div id="top-container">
@@ -17,18 +52,4 @@
     </ul>
 </div>
 </body>
-<style>
-    #top-container {
-        width: 100%;
-    }
-
-    #list-container {
-        column-count: 4;
-        column-rule: 1px solid darkgray;
-        border-radius: 10px;
-        background-color: #e0e0e0;
-        padding: 1em;
-        margin: 2em;
-    }
-</style>
 </html>

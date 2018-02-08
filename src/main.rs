@@ -15,7 +15,6 @@ use flate2::bufread::GzDecoder;
 use chrono::prelude::*;
 use io::Result;
 use std::fs::{read_dir, canonicalize, File, remove_file};
-use std::time::SystemTime;
 use std::path::{Path, PathBuf};
 use std::io;
 use std::io::prelude::*;
@@ -93,7 +92,7 @@ fn handle_index(mut tpl: String, data_path: &PathBuf) -> Response {
     let d = get_datasets(data_path);
     match d {
         Ok(available_datasets) => {
-            let outer_list_template = String::from("<li>{{dataset_name}}<ul>{{vcf_list}}</ul></li>");
+            let outer_list_template = String::from("<li class=\"dataset\"><span>{{dataset_name}}</span><ul>{{vcf_list}}</ul></li>");
 //            let inner_list_template = String::from("<li><a href=\"/{{dataset_name}}/{{vcf_name}}\" title=\"Created on: {{vcf_creation_date}}\nModified on: {{vcf_mod_data}}\nLast accessed: {{vcf_access_date}}\">{{vcf_name}}</a></li>");
             let inner_list_template = String::from("<li><a href=\"/{{dataset_name}}/{{vcf_name}}\" title=\"Modified on: {{vcf_mod_data}}\nLast accessed: {{vcf_access_date}}\">{{vcf_name}}</a></li>");
 

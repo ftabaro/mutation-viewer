@@ -16,16 +16,22 @@ Options:
 
  `vcfviewer` expect the data folder to have a specific structure:
  
- ```
+
 data
+
 ├── Abi-enza crossover
+
 │   ├── another_test.vcf
+
 │   └── somatic.vcf.gz
+
 └── ind232
+
     ├── rare.vcf.gz
+ 
     └── somatic.vcf.gz
  
- ```
+ 
 
 ### Build ###
 

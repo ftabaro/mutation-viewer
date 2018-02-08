@@ -18,17 +18,11 @@ Options:
  
 
 data
-
 ├── Abi-enza crossover
-
 │   ├── another_test.vcf
-
 │   └── somatic.vcf.gz
-
 └── ind232
-
     ├── rare.vcf.gz
- 
     └── somatic.vcf.gz
  
  

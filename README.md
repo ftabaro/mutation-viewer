@@ -16,7 +16,7 @@ Options:
 
  `vcfviewer` expect the data folder to have a specific structure:
  
-
+```bash
 data
 ├── Abi-enza crossover
 │   ├── another_test.vcf
@@ -24,7 +24,7 @@ data
 └── ind232
     ├── rare.vcf.gz
     └── somatic.vcf.gz
- 
+ ```
  
 
 ### Build ###

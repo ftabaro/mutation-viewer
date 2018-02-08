@@ -5,7 +5,7 @@ The program starts an HTTP server listening on the given port of the given url. 
 ### Usage ###
 
 ```
-$Â vcfviewer [options] <data_path>
+$ vcfviewer [options] <data_path>
 ```
 
 ```
@@ -17,14 +17,23 @@ Options:
  `vcfviewer` expect the data folder to have a specific structure:
  ```
  +-- data/
+ 
  |  +-- dataset 1/
+ 
  |  |  +-- something.vcf
+ 
  |  |  +-- other.vcf.gz
+ 
  |  +-- dataset 2/
+ 
  |  |  +-- something2.vcf
+ 
  |  |  +-- other2.vcf.gz
+ 
  |  +-- dataset 3/
+ 
  |  |  +-- something3.vcf
+ 
  |  |  +-- other3.vcf.gz 
  ```
 

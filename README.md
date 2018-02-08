@@ -1,29 +1,37 @@
-# README #
+# Simple VCF Viewer #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+The program starts an HTTP server listening on the given port of the given url. When requesting the index page the data folder is listed and the correspondent HTML view created. When selecting a VCF file from the index the user is redirected to an interactive table view of the file with IGV integration and some visual features.  
 
-### What is this repository for? ###
+### Usage ###
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+```
+$ vcfviewer [options] <data_path>
+```
 
-### How do I get set up? ###
+```
+Options:
+    --port=N        Port to listen for HTTP requests [default: 8080]
+    --address=H     Address to use for listening for HTTP requests [default: localhost]
+```
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+ `vcfviewer` expect the data folder to have a specific structure:
+ ```
+ +-- data/
+ |  +-- dataset 1/
+ |  |  +-- something.vcf
+ |  |  +-- other.vcf.gz
+ |  +-- dataset 2/
+ |  |  +-- something2.vcf
+ |  |  +-- other2.vcf.gz
+ |  +-- dataset 3/
+ |  |  +-- something3.vcf
+ |  |  +-- other3.vcf.gz 
+ ```
 
-### Contribution guidelines ###
+### Build ###
 
-* Writing tests
-* Code review
-* Other guidelines
+`vcfviewer` can be compiled from source using the `cargo` build system. For example:
 
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+```
+$ cargo build
+```

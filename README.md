@@ -24,7 +24,7 @@ data
 └── ind232
     ├── rare.vcf.gz
     └── somatic.vcf.gz
- ```
+```
  
 
 ### Build ###

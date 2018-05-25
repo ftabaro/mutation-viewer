@@ -760,15 +760,14 @@
         R = hex_str;
         G = hex_str;
         B = hex_str;
-        // TODO g_sample_coloring => g_sample_coloring
-        //th.classList.add( "sample_col_" + color_char_to_name( g_sample_coloring[ g_headers[c]]));
+
         sample_color = g_sample_coloring[ sample];
         if( sample_color == undefined || sample_color == 'R'){
             R = (percentage >= saturation_at*1.5 ? "AA" : "FF");
-        } else if( sample_color == 'G') {
+        } 
+        else if( sample_color == 'G') {
             G = (percentage >= saturation_at*1.5 ? "AA" : "FF"); 
-        }
-        else {
+        } else {
             B = (percentage >= saturation_at*1.5 ? "AA" : "FF");   
         }
 
@@ -1456,7 +1455,8 @@
 
         console.log( "Settting sample color to: '" + color_char + "'");
         signatures_to_send = [];
-        for( i=0; i < g_headers.length; i++)
+        notes_col = g_headers.indexOf("NOTES");
+        for( i=notes_col+1; i < g_headers.length; i++)
         {
             g_sample_coloring[ g_headers[ i]] = color_char;
             signatures_to_send.push( g_headers[ i] + ";;" + color_char);

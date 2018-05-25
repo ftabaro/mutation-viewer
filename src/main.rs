@@ -1,7 +1,5 @@
-#[macro_use]
-extern crate rouille;
-#[macro_use]
-extern crate serde_derive;
+#[macro_use] extern crate rouille;
+#[macro_use] extern crate serde_derive;
 extern crate serde;
 extern crate serde_json;
 extern crate docopt;
@@ -18,6 +16,7 @@ use std::fs::{read_dir, canonicalize, File, remove_file};
 use std::path::{Path, PathBuf};
 use std::io;
 use std::io::prelude::*;
+use std::io::Read;
 use std::env::current_dir;
 use std::process::exit;
 
@@ -65,7 +64,8 @@ fn main() {
     let xlsx = include_str!("../assets/xlsx.core.min.js");
 
     let index_tpl = include_str!("../assets/index.html");
-    let mutations_tpl = include_str!("../assets/mutations.html");
+    // For release
+    //let mutations_tpl = include_str!("../assets/mutations.html");
 
     let addr: String = format!("{}:{}", url, port);
     eprintln!("Server listening at {}", &addr);
@@ -77,7 +77,15 @@ fn main() {
                     let d = dataset.replace("%20", " ");
                     let data_root = &mut data_path.join(d);
                     data_root.push(vcf);
-                    handle_viewer(mutations_tpl.to_string(), d3, xlsx, &data_root)
+                    // For release
+                    //handle_viewer(mutations_tpl.to_string(), d3, xlsx, &data_root)
+
+                    // Development
+                    let mut file = File::open("/home/betastasis/mviewer/assets/mutations.html").expect("Unable to open mutations.html");;
+                    let mut html = String::new();
+                    file.read_to_string(&mut html)
+                        .expect("something went wrong reading the file");
+                    handle_viewer( html, d3, xlsx, &data_root)
                 },
 
                 (POST)(/update_mutation_blacklist) => { handle_post(request, &data_path) },
@@ -87,7 +95,6 @@ fn main() {
 }
 
 // HANDLERS
-
 fn handle_index(mut tpl: String, data_path: &PathBuf) -> Response {
     let d = get_datasets(data_path);
     match d {
@@ -125,26 +132,29 @@ fn handle_index(mut tpl: String, data_path: &PathBuf) -> Response {
 }
 
 fn handle_viewer(mut tpl: String, d3: &str, xlsx: &str, root: &PathBuf) -> Response {
-    check_auxiliary_files(&root);
 
-    let vcf;
-    if root.with_extension("vcf.gz").exists() {
-        vcf = load_data(&root, "vcf.gz");
+    let vcf = if root.with_extension("vcf.gz").exists() {
+        load_data(&root, "vcf.gz")
     } else {
-        vcf = load_data(&root, "vcf");
-    }
+        load_data(&root, "vcf")
+    };
+    if let Some(vcf) = vcf {
+		check_auxiliary_files(&root);
+		let blacklist = load_data(&root, "blacklist.tsv").unwrap();
+		let whitelist = load_data(&root, "whitelist.tsv").unwrap();
+        let samplecolor = load_data(&root, "sample_color.tsv").unwrap();
+		tpl = tpl
+	        .replace("{{xlsx_lib}}", xlsx)
+	        .replace("{{d3_lib}}", d3)
+	        .replace("{{vcf_data}}", &vcf)
+            .replace("{{samplecolor_data}}", &samplecolor)
+	        .replace("{{blacklist_data}}", &blacklist)
+	        .replace("{{whitelist_data}}", &whitelist);
 
-    let blacklist = load_data(&root, "blacklist.tsv");
-    let whitelist = load_data(&root, "whitelist.tsv");
-
-    tpl = tpl
-        .replace("{{xlsx_lib}}", xlsx)
-        .replace("{{d3_lib}}", d3)
-        .replace("{{vcf_data}}", &vcf)
-        .replace("{{blacklist_data}}", &blacklist)
-        .replace("{{whitelist_data}}", &whitelist);
-
-    Response::html(tpl)
+		Response::html(tpl)
+    } else {
+		rouille::Response::empty_404()
+	}
 }
 
 fn handle_post(request: &Request, data_path: &PathBuf) -> Response {
@@ -152,24 +162,37 @@ fn handle_post(request: &Request, data_path: &PathBuf) -> Response {
 
     let output_file_path = &data_path.join(&json.file.replace("%20", " "));
 
-    let list_file = load_data(output_file_path, &format!("{}.tsv", json.target_list));
+    let list_file = load_data(output_file_path, &format!("{}.tsv", json.target_list)).unwrap();
     let mut list: Vec<String> = list_file.lines()
         .map(|x| x.split_terminator("\t").collect::<Vec<&str>>().join(":"))
         .collect();
 
-    match &list.iter().position(|x| x == &json.signature) {
-        &Some(idx) => {
-            println!("Found {:?} at {:?}", &json.signature, &idx);
-            if !json.active {
-                list.remove(idx);
-                println!("Removed {}", &json.signature)
+    // json object signature can contain multiple signatures separated by "\n"
+    let signatures: Vec<&str> = json.signature.split("\n").collect();
+    for sig in signatures {
+        // Sample coloring saved with separator ";;" in signature
+        let v: Vec<&str> = sig.split(";;").collect();
+        let searchable_signature = v[ 0];
+
+        //match &list.iter().position(|x| x == &json.signature) {
+        match &list.iter().position(|x| x.starts_with( &searchable_signature)) {
+            &Some(idx) => {
+                println!("Found {:?} at {:?}", sig, &idx);
+                if v.len() == 2 {    
+                    // Changing color        
+                    list[ idx] = sig.into();
+                }
+                else if !json.active {
+                    list.remove(idx);
+                    println!("Removed {}", sig)
+                }
             }
-        }
-        &None => {
-            println!("Not Found {:?}", &json.signature);
-            if json.active {
-                println!("Added new {}", &json.signature);
-                list.push(json.signature);
+            &None => {
+                println!("Not Found {:?}", sig);         
+                if json.active {
+                    println!("Added new {}", sig);
+                    list.push( sig.into());
+                }
             }
         }
     }
@@ -204,11 +227,14 @@ fn parse_args(usage: &str) -> ArgvMap {
 fn get_datasets(dir: &PathBuf) -> Result<Vec<Dataset>> {
 //    let pbuf_dir = check_absolute_path(dir);
     let mut result = Vec::new();
+	eprintln!("Finding datasets in directory '{:?}'...", dir);
     for directory in read_dir(dir)? {
         let directory = directory?;
         let dir_path = directory.path();
+//	eprintln!("dir_path: {:?}", dir_path);
         let mut filenames = Vec::new();
         for file in read_dir(dir_path)? {
+//	    eprintln!("file : {:?}", file);
             let file = file?;
             let f = file.file_name().into_string();
             match f {
@@ -253,7 +279,7 @@ fn check_existence(p: &Path) -> () {
 }
 
 fn check_auxiliary_files(root: &PathBuf) -> () {
-    let suffixes = vec![String::from("whitelist.tsv"), String::from("blacklist.tsv")];
+    let suffixes = vec![String::from("whitelist.tsv"), String::from("blacklist.tsv"), String::from("sample_color.tsv")];
     for suffix in suffixes {
         let path = root.with_extension(suffix);
         check_existence(&path.as_path());
@@ -296,13 +322,12 @@ fn load_file(p: &Path) -> Result<String> {
     Ok(content)
 }
 
-fn load_data(path_to_data: &PathBuf, ext: &str) -> String {
+fn load_data(path_to_data: &PathBuf, ext: &str) -> Option<String> {
     let path_to_file = path_to_data.with_extension(ext);
     match load_file(path_to_file.as_path()) {
-        Ok(content) => return content,
-        Err(e) => eprintln!("load_data -> {:?} - {:?}", path_to_file, e)
-    };
-    "".to_string()
+        Ok(content) => Some(content),
+        _ => None
+    }
 }
 
 fn write_file(file_path: PathBuf, buf: String) -> Result<()> {

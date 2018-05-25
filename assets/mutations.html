@@ -6,21 +6,35 @@
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
 
     <style type='text/css'>
+
         body {
             font-size: 14px;
-            font-family: 'Source Sans Pro', sans-serif;
+            /*font-family: 'Source Sans Pro', sans-serif;*/
+            font-family: sans-serif;
             padding: 0;
             margin: 0;
         }
 
-        table {
+        .hidden { display: none; }
+
+        .enlarged {
+            /*height:30px;*/
+        }
+        .enlarged_sample {
+            /*height:30px;*/
+            /*transform: translate(0px, 5px) rotate(-90deg);*/            
+            font-size:9.5px;
+        }
+
+        .datatable {
             display: table;
             font-size: 12px;
-            /*white-space: nowrap;*/
+            white-space: nowrap;
             border-collapse: collapse;
-            margin: 100px 0 0 0;
+            margin: 100px 0 20px 0;
             table-layout: fixed;
             width: 1px;
+            margin-left:5px;            
         }
 
         tr {
@@ -38,58 +52,91 @@
             border: none;
         }
 
-        td {
-            border-right: 1px solid gray;
+        /* define before table.datatable td */
+        table.datatable td.selected  {
+            border: 2px solid black;
         }
 
-        td:nth-of-type(1), th:nth-of-type(1) {
+        /*
+        table.datatable td.right_of_selected  {
+            border-left: 2px solid black;
+        } 
+        */
+
+        table.datatable td {            
+            border: 1px solid gray;
+        }
+
+        table.ribbontable {
+            margin-top:20px;
+            margin-left:5px;             
+        }
+
+        table.ribbontable td {
+            border-right: 1px solid gray;           
+        }
+
+        table.ribbonslot td {
+            border: none;
+        }
+
+        /* CHROM */
+        table.datatable td:nth-of-type(1), th:nth-of-type(1) {
             width: 50px;
         }
 
-        td:nth-of-type(2), th:nth-of-type(2) {
+        /* POSITION */
+        table.datatable td:nth-of-type(2), th:nth-of-type(2) {
             width: 80px;
         }
 
-        td:nth-of-type(3), th:nth-of-type(3) {
+        /* REF */
+        table.datatable td:nth-of-type(3), th:nth-of-type(3) {
             width: 100px;
         }
 
-        td:nth-of-type(4), th:nth-of-type(4) {
+        /* ALT */
+        table.datatable td:nth-of-type(4), th:nth-of-type(4) {
             width: 100px;
         }
 
-        td:nth-of-type(5), th:nth-of-type(5) {
-            width: 100px;
+        /* GENE */
+        table.datatable td:nth-of-type(5), th:nth-of-type(5) {
+            width: 75px;
         }
 
-        td:nth-of-type(6), th:nth-of-type(6) {
-            width: 240px;
+        /* EFFECT */
+        table.datatable td:nth-of-type(6), th:nth-of-type(6) {
+            width: 160px;
         }
 
-        td:nth-of-type(7), th:nth-of-type(7) {
-            width: 240px;
-        }
+        /* NOTES */
+        table.datatable td:nth-of-type(7), th:nth-of-type(7) {
+            width: 200px;            
+        }        
 
-        td:nth-of-type(8), th:nth-of-type(8) {
-            width: 240px;
-        }
+        /* SAMPLES */
+        table.datatable td:nth-of-type(n+8), th:nth-of-type(n+8) { width: 17px; text-align:center;padding:0px; }
 
-        td:nth-of-type(9), th:nth-of-type(9) {
-            width: 100px;
-        }
-
-        td:nth-of-type(10), th:nth-of-type(10) {
-            width: 200px;
-        }
-
-        tr:hover td {
+        table.datatable th:hover {
             background-color: #edf4ff;
         }
 
+        /*
+        th.sample_col:hover {
+            background-color: #edf4ff;
+        }
+        */
+
+        table.datatable th.sample_col_red:hover { background-color: #ffa3a3; }
+        table.datatable th.sample_col_green:hover { background-color: #a3ffa3; }
+        table.datatable th.sample_col_blue:hover { background-color: #a3a3ff; }
+
         #options {
-            position: absolute;
+            /* position: relative;
             top: 10px;
             left: 10px;
+            */
         }
 
         #controls {
@@ -100,6 +147,21 @@
             white-space: nowrap;
             box-shadow: 7px 7px 10px #A0A0A0;
             border: 1px solid #A0A0A0;
+        }
+
+		#tooltip {
+			position: absolute; padding: 5px; pointer-events: none;
+			color: black; background: #ddd; white-space: nowrap;
+		}
+
+        .legend {
+            width: 20px;
+            height: 20px;
+            border: 1px solid black;
+        }
+
+        .legend_box {
+            border: 1px solid black;
         }
 
         .context-menu__items {
@@ -289,15 +351,147 @@
         .grid path {
             stroke-width: 0;
         }
+
+        .infolink:before
+        {
+            content: '?';
+            display: inline-block;
+            font-family: sans-serif;
+            font-weight: bold;
+            text-align: center;
+            width: 1.8ex;
+            height: 1.8ex;
+            font-size: 1.4ex;
+            line-height: 1.8ex;
+            border-radius: 1.2ex;
+            margin-right: 4px;
+            padding: 1px;
+            color: blue;
+            background: white;
+            border: 1px solid blue;
+            text-decoration: none;
+        }
+        
+        .infolink:hover:before
+        {
+            color: white;
+            background: blue;
+            border-color: white;
+            text-decoration: none;
+        }
+
+        .special:before
+        {
+            content: '!';
+            display: inline-block;
+            font-family: sans-serif;
+            font-weight: bold;
+            text-align: center;
+            width: 1.8ex;
+            height: 1.8ex;
+            font-size: 1.4ex;
+            line-height: 1.8ex;
+            border-radius: 1.2ex;
+            /*margin-right: 4px;*/
+            padding: 0px;
+            color: black;
+            background: white;
+            border: 1px solid black;
+            text-decoration: none;    
+            position: relative;
+            left:-3px;        
+            top:-1px;
+        }
+        
+        .special:hover:before
+        {
+            color: white;
+            background: magenta;
+            border-color: white;
+            text-decoration: none;
+        }        
+
+        .error_message {
+            position: fixed;
+            top: 10px;
+            width: 100%;
+            left: 0%;
+            background: #ff9;
+            border: 1px solid #fc0;
+            font-size: 150%;
+            padding: 15px 50px;
+            opacity: 0.0;
+            display: none;
+        }
+        .error_message p {
+            margin: 0;
+            padding: 0 40px 0 20px;
+            text-align: center;
+        }
+        
+       
+
     </style>
 </head>
 <body>
-<div id='options'>
-    <label><input id='show_silent' type='checkbox'>Show silent mutations</label><br>
-    <label><input id='show_blacklisted' type='checkbox'>Show blacklisted mutations</label><br><br>
-    <button id='export_xls' type='button'>Export XLSX</button>
+
+<div class="error_message" id="error_box">
+    <p id="error_str">Errorz</p>
 </div>
-<table id='table'></table>
+
+<table class="ribbontable">
+<tr><td>
+    <div id='options' style="width:200px;">
+        <label><input id='show_silent' type='checkbox'>Silent mutations</label><br>
+        <label><input id='show_blacklisted' type='checkbox'>Blacklisted mutations</label><br>        
+        <label><input id='show_blacklisted' type='checkbox' checked="true">Unassigned mutations</label><br>        
+        <label><input id='show_assigned' type='checkbox' checked="true">Assigned mutations</label><br>
+        <!-- <label><input id='show_germline' type='checkbox' checked="true">Germline mutations</label><br> --> 
+        
+    </div>
+</td><td>
+    <table class="ribbonslot">
+    <tr><td>
+        Sample Filter:
+    </td><td>
+        <input id='filter_text' type="text" name="filter_text" style="margin-bottom:5px;"><br> 
+        <input id='filter_do' type="button" value="Filter"> 
+        <input id='filter_clear' type="button" value="Clear">
+        <a class="infolink" href="#" title="Filtering: Only sample columns that contain filter text are shown. Separate multiple filters with the '+' sign."></a>
+        <div align="center" id='filter_notification' style="font-size:11px;margin-top:5px;color:#FF0000;display:none;"></div>
+    </td></tr>
+    </table>
+</td><td>
+    Set color:<br>
+    <input id='set_color_red' type="button" value="R" style="width:25px;text-align:center;padding:0px;"> 
+    <input id='set_color_green' type="button" value="G" style="width:25px;text-align:center;padding:0px;"> 
+    <input id='set_color_blue' type="button" value="B" style="width:25px;text-align:center;padding:0px;"> 
+    <p>
+    	<input id="show_numbers" type="button" value="Show %" style="width:80px;text-align:center;">
+	</p>
+</td><td>
+    <div id="legend_box">
+        <table class="ribbonslot">
+            <tr>
+            <td>New/<br>Uncurated</td><td><div class="legend" style="background-color:#ffffe0;"></div></td>
+            <td style="padding-left:20px;">Somatic/<br>Curated</td><td><div class="legend" style="background-color:#FFFFFF;"></div></td>
+            <!-- <td style="padding-left:20px;">Germline/<br>Other</td><td><div class="legend" style="background-color:#D8FFD6;"></div></td> -->
+            <td style="padding-left:20px;">False pos/<br>Blacklisted</td><td><div class="legend" style="background-color:#C0C0C0;"></div></td>            
+            <td style="padding-left:20px;">Special</td><td style="text-align:center;"><div class="legend" style="text-align:center;background-color:#FFFFFF;"><a class="special" href="#"></a></div></td>
+            </tr>
+        </table>
+    </div>
+</td><td>
+    <button id='export_xls' type='button' style="margin:10px;">Export XLSX</button>
+</td><td>
+    <a href="?mode=matrix" style="white-space: nowrap;">Matrix view</a><br>
+    <a href="?mode=list" style="white-space: nowrap;">List view</a>
+</td>
+</tr>
+</table>
+
+
+<table id='table' class="datatable"></table>
 <nav class="context-menu hidden" id='controls'>
     <ul class="context-menu__items">
         <li class="context-menu__item">
@@ -320,6 +514,16 @@
                 <i class="fa fa-times"></i> Show barplot
             </a>
         </li>
+        <li class="context-menu__item">
+            <a class="context-menu__link" id='star_button'>
+                <i class="fa fa-times"></i> Toggle star
+            </a>
+        </li>        
+        <li class="context-menu__item">
+            <a class="context-menu__link" id='special_button'>
+                <i class="fa fa-times"></i> Toggle special
+            </a>
+        </li>           
     </ul>
     <span style='display: none' id='info'></span>
 </nav>
@@ -334,6 +538,8 @@
 <script type='text/javascript'>let _VCF = `{{vcf_data}}`</script>
 <script type='text/javascript'>let _BLACKLIST = `{{blacklist_data}}`</script>
 <script type='text/javascript'>let _WHITELIST = `{{whitelist_data}}`</script>
+<script type='text/javascript'>let _SAMPLECOLOR = `{{samplecolor_data}}`</script>
+
 <script type='text/javascript'>
 
     function $(id) {
@@ -344,12 +550,27 @@
         return document.querySelectorAll(query);
     }
 
-    let headers = [];
-    let orig_mutations = undefined;
+    // Global variables
+    let g_orig_headers = [];
+    let g_headers = [];
+    let g_orig_mutations = undefined;
     let mutations = [];
     let selected_mutation = undefined;
     let blacklist = undefined;
     let whitelist = undefined;
+    let g_sample_coloring = undefined;
+    let g_filter = undefined;
+    let g_cur_filter_str = "";
+    let g_view_mode = "list";
+    let g_clicked_data_rowcol = [-1,-1];
+    let g_bam_file_url = "";
+
+    // Coloring
+    //let g_sample_coloring = [];
+    let g_highlight_all = false;
+    let g_special_data = [];
+    let g_igv_td = [-1,-1]; // row,col
+    let g_show_numbers = false;
 
     // function download(url) {
     //     return new Promise(function (resolve, reject) {
@@ -362,6 +583,21 @@
     //     })
     // }
 
+    //$(document).ready(function(e) {
+    function show_error( msg) {
+        // Check if there's a message  
+        $('error_box').style.opacity = 1.0;
+        $('error_box').style.display = "block";        
+        $('error_str').innerHTML = msg;
+        setTimeout(removeMessage, 3000);            
+    }
+
+    function removeMessage(){  
+        $('error_box').style.opacity = 0.0;
+        $('error_box').style.display = "none";
+        $('error_str').innerHTML = "";
+    }
+
     function post_json(url, data, success_handler) {
         let request = new XMLHttpRequest();
         request.open('POST', url, true);
@@ -369,6 +605,9 @@
         request.onload = function () {
             if (this.status === 200 && success_handler)
                 success_handler(JSON.parse(this.response));
+            else if( this.status !== 200) {
+                show_error( "Syncing list with server failed");
+            }
         };
         request.send(JSON.stringify(data));
     }
@@ -384,17 +623,43 @@
         return arr;
     }
 
+    function filter_do() {
+
+         new_filter = document.getElementById("filter_text").value;
+         if( new_filter.localeCompare( g_cur_filter_str) == 0 ) { return; } //Exact match
+
+         notes_col = g_orig_headers.indexOf("NOTES");
+         g_filter = parse_filter( g_orig_headers.slice( notes_col+1), new_filter );
+         g_cur_filter_str = new_filter;
+
+         render_matrix();
+    }
+
+    function filter_clear() {
+
+         document.getElementById("filter_text").value = "";
+         if( g_cur_filter_str == "" ) { return; } //Exact match
+
+         notes_col = g_orig_headers.indexOf("NOTES");
+         g_filter = parse_filter( g_orig_headers.slice( notes_col+1), "" );
+         g_cur_filter_str = "";
+
+         render_matrix();
+
+    }
+    
+
     function export_xls() {
-        let rows = [headers].concat(mutations.map(each => Object.values(each)));
+        let rows = [g_orig_headers].concat(mutations.map(each => Object.values(each)));
         let ws = {};
         for (let r = 0; r < rows.length; r++) {
-            for (let c = 0; c < headers.length; c++) {
+            for (let c = 0; c < g_orig_headers.length; c++) {
                 let cell = {v: rows[r][c], t: 's'};
                 //if (typeof cell.v ==== 'number') cell.t = 'n';
                 ws[XLSX.utils.encode_cell({c: c, r: r})] = cell;
             }
         }
-        let range = {s: {c: 0, r: 0}, e: {c: headers.length, r: rows.length}};
+        let range = {s: {c: 0, r: 0}, e: {c: g_orig_headers.length, r: rows.length}};
         ws['!ref'] = XLSX.utils.encode_range(range);
 
         function s2ab(s) {
@@ -429,13 +694,20 @@
         return effect.search(/Missense|rameshift|Stopgain|Stoploss|Splice/) >= 0;
     }
 
+    function preprocess_matrix(vcf) {
+        header_row_index = preprocess_header( vcf);
+        return vcf.slice(header_row_index+1);
+    }
+
     function preprocess_data(vcf) {
 
+        header_row_index = preprocess_header( vcf);
+
         // get sample names from header line
-        let samples = vcf[0].slice(7);
+        let samples = vcf[header_row_index].slice(7);
 
         // process all remaining lines
-        return vcf.slice(1).reduce(function (out, mutation_row) {
+        return vcf.slice(header_row_index+1).reduce(function (out, mutation_row) {
             let curr_samples = mutation_row.slice(7);
 
             // for each mutation_row, get only percent of reads displaying mutation and sample name
@@ -477,11 +749,252 @@
         }, [])
     }
 
-    function render_table() {
-        if (orig_mutations === undefined || whitelist === undefined ||
+    function color_from_percentage( sample, percentage, saturation_at ) {
+        //rounded = Math.round( percentage);
+        //if( rounded == 0 ) { return ""; }
+
+        dec = 255 - Math.max( 0, Math.min( 255, Math.round( 255.0 * (percentage / saturation_at))));
+        hex_str = dec.toString(16)
+        if( hex_str.length == 1) { hex_str = "0" + hex_str; }
+
+        R = hex_str;
+        G = hex_str;
+        B = hex_str;
+        // TODO g_sample_coloring => g_sample_coloring
+        //th.classList.add( "sample_col_" + color_char_to_name( g_sample_coloring[ g_headers[c]]));
+        sample_color = g_sample_coloring[ sample];
+        if( sample_color == undefined || sample_color == 'R'){
+            R = (percentage >= saturation_at*1.5 ? "AA" : "FF");
+        } else if( sample_color == 'G') {
+            G = (percentage >= saturation_at*1.5 ? "AA" : "FF"); 
+        }
+        else {
+            B = (percentage >= saturation_at*1.5 ? "AA" : "FF");   
+        }
+
+        retval = "background-color:#" + R + G + B + ";";
+        //console.log("color:" + retval);
+        return retval;
+    }    
+
+    function preprocess_header( vcf) {
+
+        header_row_index = 0;
+        while( vcf[ header_row_index][ 0].startsWith('#'))
+        { 
+            if( vcf[ header_row_index][ 0].indexOf("BAM_BASE_URL=") > 0){ 
+                g_bam_file_url = vcf[ header_row_index][ 0].split("=").splice( 1).join('');
+                if( g_bam_file_url.indexOf('http:') < 0){ g_bam_file_url = g_bam_file_url.replace( "/home", "http://tambio.uta.fi"); }                
+            }
+            ++header_row_index; 
+        }
+        g_orig_headers = vcf[ header_row_index];
+        return header_row_index;
+
+    }
+
+    function render_table(){
+    	g_igv_td = [-1,-1];
+        if( g_view_mode == "list") { render_list(); }
+        else { render_matrix(); }
+    }
+
+    function has_stars( row, first_col){
+        for( c = first_col; c < row.length; c++){
+            if( row[ c].endsWith( "*")) { return true; }
+        }
+        return false;
+    }
+    
+    function color_char_to_name( cc){        
+        if( cc == 'G') return "green";
+        if( cc == 'B') return "blue";
+        return "red";
+    }
+
+    function has_stars_in( row, col_offset, cols ){
+
+        data = cols.map(a => row[col_offset+1+a]);
+        //console.log("looking at: " + row[ 0] + row[ 1] + " " + " data:" + data);
+        for( i = 0; i < cols.length; i++) {
+            if( row[ cols[ i]+col_offset].endsWith( "*")) { return true; }
+        }
+        //console.log("FALSE");
+        return false;
+    }
+    
+
+    function render_matrix() {
+
+        if (g_orig_mutations === undefined || whitelist === undefined ||
             blacklist === undefined) return;
 
-        mutations = orig_mutations.slice(0);   // Make a copy
+        mutations = g_orig_mutations.slice( 0);   // Make a copy of full list
+        g_headers = g_orig_headers.slice( 0);
+
+        notes_col = g_orig_headers.indexOf("NOTES");
+        effect_col = g_orig_headers.indexOf("EFFECT");
+
+        if( notes_col < 0 ) { show_error( "Invalid header row (missing \"NOTES\")."); return false; } 
+
+        if ($('show_silent').checked === false) {
+            mutations = mutations.filter(m => is_protein_altering(m[effect_col]));
+        }
+
+        // Hide blacklisted mutations if requested by user.
+        if ($('show_blacklisted').checked === false) {
+            mutations = mutations.filter(m => !(mutation_signature(m) in blacklist));
+        }       
+
+        // Sample filtering
+        if( g_filter.length ) {
+
+            // Filter header cols
+            g_headers = g_orig_headers.slice( 0, notes_col+1).concat( g_filter.map(i => g_orig_headers[notes_col+1+i]));
+            
+            // Filter unstarred rows
+            mutations = mutations.filter(m => has_stars_in(m, notes_col+1, g_filter));
+
+            // Filter data columns
+            for( m = 0; m < mutations.length; m++){
+                //console.log( "before:" + mutations[ m]);
+                mutations[ m] = mutations[ m].slice( 0, notes_col+1).concat( g_filter.map(i => mutations[ m][notes_col+1+i]));   
+                //console.log( "after:" + mutations[ m]);
+            }            
+
+        }
+
+        n_cols = g_headers.length;
+        single_pat = g_filter.length == 1 ? true : false;
+
+        let old_table = $('table');
+        let new_table = old_table.cloneNode( true);    // Modify outside DOM.
+        while (new_table.hasChildNodes())
+            new_table.removeChild(new_table.lastChild);
+
+        // Create header
+        let thead = document.createElement('thead');
+        let thead_tr = document.createElement('tr');
+        thead.appendChild( thead_tr);
+
+        for (let c = 0; c < n_cols; c++) {
+
+            let th = document.createElement('th');
+            // Process sample columns
+            if( c > notes_col) { 
+                //if( g_filter.length && !g_filter.includes( c-(notes_col+1))) { continue; }
+                th.style="overflow: visible; padding: 0; transform-origin: 0% 0%; transform: translate(0px, 5px) rotate(-45deg);white-space: nowrap;" + 
+                		 (single_pat ? "width:200px;" : "");
+                
+                th.classList.add( "sample_col_" + color_char_to_name( g_sample_coloring[ g_headers[c]]));
+            }
+            th.appendChild(document.createTextNode(g_headers[c]));
+            th.addEventListener('click', function() { rotate_sample_color(g_headers[c]); });
+            thead_tr.appendChild(th);
+        }
+        new_table.appendChild(thead);
+
+        // Create body
+        let tbody = document.createElement('tbody');
+        for (let r = 0; r < mutations.length; r++) {
+
+            let tr = document.createElement('tr');
+            tr.id = 'r' + r;
+            //tr.addEventListener('click', event => event.target.parentNode.classList.toggle('selected'))
+            tr.addEventListener('contextmenu', trigger_control);
+            tr.addEventListener('click', toggle_size);
+            starred_row = false;
+
+            for (let c = 0; c < n_cols; c++) {                
+
+                let td = document.createElement('td');
+                let text = mutations[r][c];
+                //console.log( "header:" + g_headers[ c] + "text:" + r + "," + c + " " + text);
+
+                // Process sample cols
+                if( c > notes_col)
+                {
+                    // Add coloring
+                    if( g_highlight_all == 'all' || text.endsWith('*') ) {
+                        data_cols = text.split('%');
+                        //data_cols = text.split('%');
+                        percentage = parseInt( data_cols[ 0]);
+                        if( percentage > 0 ) { 
+	                        // Call2 data format:
+	                        // alt_count_percentage:total_count:mapq:baseq_sidedness:*
+	                        td.style = color_from_percentage( g_headers[c], percentage, 50.0);
+	                        //td.style.textAlign = "left";
+	                        if( single_pat == true ) { td.appendChild(document.createTextNode(text)); }
+	                        else { td.appendChild(document.createTextNode("")); }
+	                        //starred_row = true; 
+                    	}
+                    }
+                }
+                else {
+                	// Set title for non-sample cells (slow popup)
+                	if( text.length ) { td.title = tooltip(g_headers[c], text); }
+                    td.appendChild(document.createTextNode(text));                    
+                }
+                
+                
+                
+            
+                tr.appendChild(td);
+            }
+
+            // Highlight new mutations in light yellow color.
+            //console.log( "ROW:", mutations[ r]);
+            let signature = mutations[ r].slice(0, 4).join(':');
+            if( signature in blacklist) tr.classList.add('blacklisted');
+            else if( !(signature in whitelist)) tr.classList.add('new');
+            tbody.appendChild(tr);           
+        }
+
+        new_table.appendChild(tbody);
+        old_table.parentNode.replaceChild(new_table, old_table);  // Insert to DOM.
+
+        new_table.addEventListener('contextmenu', function (e) {
+            let tr = e.target;
+
+            if (e.altKey) {
+                mark_seen_variant(e);
+            } else if (e.ctrlKey) {
+                blacklist_variant(e);
+            }
+            e.preventDefault();
+            return false;
+        });
+
+		new_table.addEventListener('mousemove', function(e) {
+			var tooltip = $('tooltip');
+			var row = e.target.parentNode.rowIndex;
+			var col = e.target.cellIndex;
+			if (row >= 1 && col >= notes_col + 1) {
+				tooltip.classList.remove('hidden');
+				tooltip.innerHTML = g_headers[col] + '<br>' +
+					mutations[row - 1][4] + ' ' + mutations[row - 1][5] + '<br>' +
+					mutations[row - 1][col];
+				/*
+				tooltip.style.left = e.pageX + 10 + 'px';
+				tooltip.style.top = e.pageY - 30 + 'px';
+				*/
+
+				tooltip.style.left = e.pageX + 10 + 'px';
+				tooltip.style.top = e.pageY - 60 + 'px';
+
+			} else {
+				tooltip.classList.add('hidden');
+			}
+		});
+
+    }
+
+    function render_list() {
+        if (g_orig_mutations === undefined || whitelist === undefined ||
+            blacklist === undefined) return;
+
+        mutations = g_orig_mutations.slice(0);   // Make a copy
+        header = g_orig_header;
 
         // Hide silent mutations if user only wants to see protein altering.
         if ($('show_silent').checked === false) {
@@ -494,6 +1007,7 @@
                 !(m['signature'] in blacklist));
         }
 
+
         let old_table = $('table');
         let new_table = old_table.cloneNode(true);    // Modify outside DOM.
         while (new_table.hasChildNodes())
@@ -502,9 +1016,10 @@
         let thead = document.createElement('thead');
         let thead_tr = document.createElement('tr');
         thead.appendChild(thead_tr);
-        for (let c = 0; c < headers.length; c++) {
+        for (let c = 0; c < g_orig_headers.length; c++) {
             let th = document.createElement('th');
-            th.appendChild(document.createTextNode(headers[c]));
+
+            th.appendChild(document.createTextNode(g_orig_headers[c]));
             thead_tr.appendChild(th);
         }
         new_table.appendChild(thead);
@@ -516,7 +1031,7 @@
             //tr.addEventListener('click', event => event.target.parentNode.classList.toggle('selected'))
             tr.addEventListener('contextmenu', trigger_control);
 
-            for (let c of headers) {
+            for (let c of g_orig_headers) {
                 let td = document.createElement('td');
                 let text = mutations[r][c.toLowerCase()];
                 td.appendChild(document.createTextNode(text));
@@ -547,11 +1062,12 @@
         });
     }
 
-    function tooltip(header, mutation) {
+    function tooltip(header, text) {
         if (['CHROM', 'POSITION', 'REF', 'ALT'].includes(header.toUpperCase())) {
-            return mutation['signature']
+            return text
         }
-        return header.charAt(0) + header.slice(1).toLowerCase() + '\n' + mutation[header.toLowerCase()]
+        return header + ":\n" + text;
+        //return header.charAt(0) + header.slice(1).toLowerCase() + '\n' + mutation[header.toLowerCase()]
     }
 
     function onkeypress(event) {
@@ -591,28 +1107,156 @@
         let left = (event.clientX - deltaW) + "px";
         let top = (event.clientY - deltaH) + "px";
         div.style.left = left;
-        div.style.top = top;
+        div.style.top = top;        
 
         event.target.parentNode.classList.add('selected');
-        $('info').innerHTML = event.target.parentNode.rowIndex - 1;
+
+        row = (event.target.parentNode.rowIndex - 1);
+        col = (event.target.cellIndex);
+
+        console.log( "Table info:" + event.target.nodeName + ":" + row  + "," + col);
+        $('info').innerHTML = row + ":" + col;
+        g_clicked_data_rowcol = [parseInt(row),parseInt(col)];
         return false
+    }
+
+	function set_show_numbers(){
+
+		notes_col = g_headers.indexOf("NOTES");
+		n_rows = mutations.length;
+
+		for( row = 0; row < n_rows; row++) {
+	        for( i = 0; i < g_headers.length; i++) {
+	            if( i > notes_col) {
+	                text = mutations[row][i].match(/\d+\.\d+%/);
+	                //console.log( "capture:" + text);
+	                text = text[ 0].substring( 0, text[ 0].indexOf("."));
+	                if( text == "0") text = "";
+	                //console.log( "text:" + text);
+	                
+	                toggle_td_class( [row,i], "enlarged_sample", text, "");
+	            }
+	            else {
+	                toggle_td_class( [row,i], "enlarged");    
+	            }
+        	}
+        }		
+
+	}
+
+    function toggle_size( event ){
+        console.log("toggle size!");
+
+        row = (event.target.parentNode.rowIndex - 1);
+        col = (event.target.cellIndex);
+
+        console.log( "Table info:" + event.target.nodeName + ":" + row  + "," + col);
+        $('info').innerHTML = row + ":" + col;
+        g_clicked_data_rowcol = [parseInt(row),parseInt(col)];
+
+        notes_col = g_headers.indexOf("NOTES");           
+
+        for( i = 0; i < g_headers.length; i++) {
+            if( i > notes_col) {
+                text = mutations[row][i].match(/\d+\.\d+%/);
+                //console.log( "capture:" + text);
+                text = text[ 0].substring( 0, text[ 0].indexOf("."));
+                if( text == "0") text = "";
+                //console.log( "text:" + text);
+                
+                toggle_td_class( [row,i], "enlarged_sample", text, "");
+            }
+            else {
+                toggle_td_class( [row,i], "enlarged");    
+            }
+        }
     }
 
     function trigger_igv(event) {
 
+        if( g_bam_file_url == undefined || g_bam_file_url.length < 1 ) { 
+            alert("Bam file base url has not been set. Set it by adding a line to the beginning of the VCF file: '##BAM_BASE_URL=http://myurl'. The bam files need to be named as 'sample_column_name.bam'"); 
+            return false; 
+        }
+
         let row = parseInt($('info').innerHTML);
 
-        let locus = mutations[row]['chrom'] + ':' + mutations[row]['position'];
-        let bam_file = mutations[row]['sample'] + '.bam';
+        let locus = "";
+        let bam_file = "";
+
+        if( g_view_mode == "list") {
+           locus = mutations[row]['chrom'] + ':' + mutations[row]['position'];
+           bam_file = mutations[row]['sample'] + '.bam';
+        } else {
+           if( g_clicked_data_rowcol.length != 2 && g_clicked_data_rowcol[ 0] >= 0 && g_clicked_data_rowcol[ 1] >= 0) { return false; }
+
+           row = parseInt( g_clicked_data_rowcol[ 0]); // visual row
+           col = parseInt( g_clicked_data_rowcol[ 1]); // visual col
+
+           // When launching IGV from other than sample columns
+           // find first starred sample on row and view that
+           notes_col = g_headers.indexOf("NOTES");           
+           if( col <= notes_col ) { 
+
+              for( c = notes_col+1; c < g_headers.length; c++ ) {
+                 if( mutations[ row][ c].indexOf("*") >= 0 ) {
+                    col = c; // Set to first visible starred sample
+                    break;
+                 }
+              }
+              if( col <= notes_col ) { console.log("No visible starred samples on row " + row + " found?"); return; }
+           }
+           
+           // Highlight borders of selected sample cell
+           toggle_td_class( g_igv_td, "selected");
+           //toggle_td_class( [g_igv_td[0],g_igv_td[1]+1], "right_of_selected");
+           
+           g_igv_td = [row, col];
+           toggle_td_class( g_igv_td, "selected");
+           //toggle_td_class( [g_igv_td[0],g_igv_td[1]+1], "right_of_selected");
+
+           sample_name = g_headers[ col]; 
+           locus = mutations[ row].slice( 0, 2).join(":");
+           bam_file = sample_name + '.bam';
+        }
+
+        request_str = 'http://localhost:60151/load?file=' + g_bam_file_url + bam_file + '&genome=hg38&locus=' + locus + "&merge=false";
+        console.log( "IGV: '" + request_str + "'");
+        
         let request = new XMLHttpRequest();
-        request.open('GET', 'http://localhost:60151/load?file={{bam_root}}' + bam_file + '&genome=hg38&locus=' + locus + '&merge=false', true);
+        // IGV listens to port 60151
+
+        request.open('GET', request_str, true);
         request.send();
         event.preventDefault();
+    }
+
+    function toggle_td_class( row_col, td_class, when_on=undefined, when_off=undefined) {
+
+       retval = undefined;
+       if( row_col[ 0] < 0 || row_col[ 1] < 0 ) { return retval; }
+       let tr = $('r' + row_col[ 0]); //get_row(event);
+       if( tr == null || tr == undefined ){ console.log("Error finding tr for td "+ row_col + " class: " + td_class); return; }
+       td = tr.childNodes[ row_col[ 1]];
+       if( td != undefined ) { 
+            retval = td.classList.toggle( td_class);
+            if( retval && when_on != undefined){
+                td.innerHTML = when_on;
+            }
+            else if( !retval && when_off != undefined){
+                td.innerHTML = when_off;
+            }            
+        }       
+       else { console.log("Error toggling td "+ row_col + " class: " + td_class); }
+
+       console.log("toggled td" + retval);
+       return retval;
     }
 
     function get_row(event) {
 
         let target_element = event.target;
+        console.log("Nodename:" + target_element.nodeName);
 
         // understand entry point
         if (target_element.nodeName === 'A') {
@@ -635,14 +1279,103 @@
         }
     }
 
+    function toggle_star( event ) {
+
+    	notes_col = g_orig_headers.indexOf("NOTES");
+
+        if( g_view_mode == "list") {
+           //TODO
+        } 
+        else {
+
+           if( g_clicked_data_rowcol.length != 2 && g_clicked_data_rowcol[ 0] >= 0 && g_clicked_data_rowcol[ 1] >= 0) { return false; }
+           row = parseInt( g_clicked_data_rowcol[ 0]); // visual row
+           col = parseInt( g_clicked_data_rowcol[ 1]); // visual col
+          
+           sample_name = g_headers[ col];  
+
+           orig_col = g_orig_headers.indexOf( sample_name);                      
+           if( orig_col < 0 ){ show_error("Error finding mutation sample column."); return false; }
+           else if( orig_col <= notes_col) { show_error("Select a sample column to toggle starred status."); return false; }
+
+           orig_row = -1;
+           sig = mutation_signature( mutations[ row]);
+           for( r = row; r < g_orig_mutations.length; r++ ) {
+                if( sig == mutation_signature( g_orig_mutations[ r])){ orig_row = r; break; }
+           }
+           if( orig_row < 0 ){ show_error("Error finding mutation row."); return false; }
+
+
+           orig_mut_data = g_orig_mutations[ orig_row][ orig_col];
+		   //console.log("datacol: " + row + "," + orig_col + " data:" + mut_data + "sample:" + sample_name );
+		   //console.log("Toggle star for: " + orig_row + "," + orig_col + " data:" + orig_mut_data);
+
+           if( orig_mut_data.endsWith(" *")) { 
+           		console.log("removing star");
+           		g_orig_mutations[ orig_row][ orig_col] = orig_mut_data.substring(0, orig_mut_data.length - 2);            		           		
+           }
+           else if( orig_mut_data.endsWith("*")) {
+                console.log("removing star (no space)");
+                g_orig_mutations[ orig_row][ orig_col] = orig_mut_data.substring(0, orig_mut_data.length - 1);                                 
+           }
+           else { 
+           		console.log("adding star");
+           		g_orig_mutations[ orig_row][ orig_col] = orig_mut_data + " *"; 
+           }        
+        }
+        render_table();
+    }
+
+    function toggle_special( event ) {
+
+        notes_col = g_orig_headers.indexOf("NOTES");
+
+        if( g_view_mode == "list") {
+           //TODO
+        } 
+        else {
+           if( g_clicked_data_rowcol.length != 2 && 
+               g_clicked_data_rowcol[ 0] >= 0 && 
+               g_clicked_data_rowcol[ 1] >= 0) { return false; }
+
+           console.log( "click:" + g_clicked_data_rowcol[ 0] + "," + g_clicked_data_rowcol[ 1]);
+
+           row = parseInt( g_clicked_data_rowcol[ 0]); // visual row
+           col = parseInt( g_clicked_data_rowcol[ 1]); // visual col
+  
+           //sample_name = g_headers[ col];  
+
+           let tr = $('r' + row); //get_row(event);
+           if( tr == null || tr == undefined ){ show_error("Error finding correct mutation row."); }
+
+           td = tr.childNodes[ col];
+
+           console.log("specializing");
+           td.classList.toggle("special");                       
+        }
+    }    
+
     function mark_seen_variant(event) {
+
         let d = generate_post_object("whitelist");
 
-        // Update DOM and get data
-        let tr = get_row(event);
-        let signature = mutations[tr.rowIndex - 1]['signature'];
-        tr.classList.toggle('new');
+        row = parseInt( g_clicked_data_rowcol[ 0]); // visual row
+        col = parseInt( g_clicked_data_rowcol[ 1]); // visual col
 
+        let signature = "";
+        if( g_view_mode == "matrix"){
+            signature = mutations[ row].slice(0, 4).join(':');            
+        }
+        else {
+            signature = mutations[ row]['signature'];
+        }
+
+        // Update DOM and get data
+        //let tr = get_row(event);
+        let tr = $('r' + row); //get_row(event);
+        if( tr == null || tr == undefined ){ show_error("Error finding correct mutation row."); }
+
+        tr.classList.toggle('new');
         // Update local whitelist
         if (tr.classList.contains('new')) delete whitelist[signature];
         else whitelist[signature] = true;
@@ -657,11 +1390,30 @@
     }
 
     function blacklist_variant(event) {
-        let d = generate_post_object("blacklist");
 
+        let post_obj = generate_post_object("blacklist");
+
+        //console.log( "ROW:" + (tr.rowIndex - 1));
+        //console.log( "SIGN:" + (mutations[tr.rowIndex - 1]['signature']));
+        row = parseInt( g_clicked_data_rowcol[ 0]); // visual row
+        col = parseInt( g_clicked_data_rowcol[ 1]); // visual col
+
+        let signature = "";
+
+        if( g_view_mode == "matrix"){
+            signature = mutation_signature( mutations[ row]); //.slice(0, 4).join(':');            
+        }
+        else {
+            signature = mutations[ row]['signature'];
+        }
+
+        //console.log("mutrow:" + parseInt( row));
         // get DOM element and data
-        let tr = get_row(event);
-        let signature = mutations[tr.rowIndex - 1]['signature'];
+
+        // Update DOM and get data
+        //let tr = get_row(event);
+        let tr = $('r' + row); //get_row(event);
+        if( tr == null || tr == undefined ){ show_error("Error finding correct mutation row."); }
 
         // get current status and update DOM
         let now_blacklisted = !tr.classList.contains('blacklisted');
@@ -672,10 +1424,56 @@
         else delete blacklist[signature];
 
         // Update blacklist on server
-        d.signature = signature;
-        d.active = now_blacklisted;
-        console.log(d);
-        post_json('/update_mutation_blacklist', d);
+        post_obj.signature = signature;
+        post_obj.active = now_blacklisted;
+        console.log(post_obj);
+        //show_error( "Sending blacklist");
+        post_json('/update_mutation_blacklist', post_obj);
+        //console.log("RETVAL:" + retval);
+    }
+
+    function rotate_sample_color(sample) {
+        old_color = g_sample_coloring[ sample];
+        new_color = "G";
+        if( old_color == 'G') { new_color = 'B'; }
+        else if( old_color == 'B') { new_color = 'R'; }
+        //console.log( "Rotating sample '"+sample+"'color to: '" + new_color + "'");  
+        g_sample_coloring[ sample] = new_color;
+        render_table();      
+
+        let post_obj = generate_post_object("sample_color");
+
+        // Update blacklist on server        
+        post_obj.signature = sample + ";;" + new_color;
+        post_obj.active = true; // Always true
+        console.log(post_obj);
+        
+        post_json('/update_mutation_blacklist', post_obj);
+
+    }
+
+    function set_visible_sample_color(color_char) {
+
+        console.log( "Settting sample color to: '" + color_char + "'");
+        signatures_to_send = [];
+        for( i=0; i < g_headers.length; i++)
+        {
+            g_sample_coloring[ g_headers[ i]] = color_char;
+            signatures_to_send.push( g_headers[ i] + ";;" + color_char);
+        } 
+        render_table();      
+        // TODO     
+        //post_json('/update_sample_coloring', d);
+
+        let post_obj = generate_post_object("sample_color");
+
+        // Update sample color list on server        
+        post_obj.signature = signatures_to_send.join('\n');
+        post_obj.active = true; // Always true
+        console.log(post_obj);
+        
+        post_json('/update_mutation_blacklist', post_obj);
+
     }
 
     function clear_control() {
@@ -690,6 +1488,18 @@
         if (tr_list[0]) tr_list[0].classList.remove('selected');
     }
 
+    function getQueryVariable(variable) {
+      var query = window.location.search.substring(1);
+      var vars = query.split("&");
+      for (var i=0;i<vars.length;i++) {
+        var pair = vars[i].split("=");
+        if (pair[0] == variable) {
+          return pair[1];
+        }
+      }
+      return ""; //alert('Query Variable ' + variable + ' not found');
+    } 
+
     // function init (resolved) {
     function init() {
 
@@ -700,10 +1510,31 @@
         let Vcf = parse_tsv(_VCF);
         let Whitelist = _WHITELIST;
         let Blacklist = _BLACKLIST;
+        let SampleColoring = _SAMPLECOLOR;
 
-        // parse data
-        headers = ['CHROM', 'POSITION', 'REF', 'ALT', 'GENE', 'EFFECT', 'NOTES', 'SAMPLE', 'FREQ'];
-        orig_mutations = preprocess_data(Vcf);
+        g_view_mode = getQueryVariable('mode');
+        g_cur_filter_str = getQueryVariable('f');
+        g_highlight_all = getQueryVariable('hl');
+        g_show_numbers = getQueryVariable('nums');
+
+        document.getElementById("filter_text").value = g_cur_filter_str;
+
+        if( g_view_mode == 'matrix') {
+
+            g_orig_mutations = preprocess_matrix( Vcf);
+            notes_col = g_orig_headers.indexOf("NOTES");
+            g_filter = parse_filter( g_orig_headers.slice( notes_col+1), g_cur_filter_str);
+            //console.log("text4:" + mutations[ 0][ 4]);
+            //console.log("orig_text4:" + g_orig_mutations[ 0][ 4]);
+            //console.log("orig_text4:" + g_orig_mutations[ 0][ 4]);
+
+        }
+        else {
+            // parse data            
+            g_orig_mutations = preprocess_data(Vcf);
+            // Override header parsed by preprocessing
+            g_orig_headers = ['CHROM', 'POSITION', 'REF', 'ALT', 'GENE', 'EFFECT', 'NOTES', 'SAMPLE', 'FREQ'];
+        }
 
         // parse whitelist
         whitelist = {};
@@ -725,8 +1556,63 @@
             blacklist[signature] = true;
         }
 
+        // parse sample coloring
+        g_sample_coloring = {};
+        lines = SampleColoring.split('\n');
+        for (let k = 0; k < lines.length; k++) {
+            if (lines[k] === '') continue;
+            let cols = lines[k].split(';;');
+            if( cols.length >= 2 )
+            {
+                let sample_name = cols[ 0];
+                let color = cols[ 1];
+                g_sample_coloring[ sample_name] = color;
+            }
+        }
+
         // render table
         render_table();
+
+    }
+
+    function parse_filter( sample_cols, filter_str) {
+
+        if( !filter_str || filter_str.length == 0 ) { 
+            document.getElementById( 'filter_notification').style.display = 'none';
+            return []; 
+        }
+
+        retval = [];
+        filter_arr = filter_str.split('+');
+        //console.log("Filter_Arr:" + filter_arr);
+        //console.log("Filter_Arr_len:" + filter_arr.length);
+        //console.log("sample_cols:" + sample_cols);
+
+        for( f=0; f < filter_arr.length; f++) {            
+            for( s=0; s < sample_cols.length; s++) {                
+                //console.log("COMP:" + sample_cols[ s].toLowerCase() + "<->" + filter_arr[ f].toLowerCase());
+                if( sample_cols[ s].toLowerCase().indexOf( filter_arr[ f].toLowerCase()) >= 0 ) { retval.push( s); }
+            }
+        }   
+        
+        // Remove duplicates
+        retval = retval.filter((v, i, a) => a.indexOf(v) === i)
+        console.log("Filters:" + retval)
+
+        if( retval.length > 0 ) {
+            n_visible = sample_cols.length - retval.length;
+            document.getElementById( 'filter_notification').innerHTML = n_visible + " sample" + 
+                                                                        (n_visible == 1 ? "" : "s") + " filtered out";
+            document.getElementById( 'filter_notification').style.display = 'block';
+        }        
+        else
+        {
+            document.getElementById( 'filter_notification').innerHTML = "No matching samples"
+            document.getElementById( 'filter_notification').style.display = 'block';   
+        }
+
+        
+        return retval.filter((v, i, a) => a.indexOf(v) === i);
     }
 
     function show_barplot() {
@@ -1114,12 +2000,27 @@
         $('show_silent').addEventListener('click', render_table);
         $('show_blacklisted').addEventListener('click', render_table);
         $('export_xls').addEventListener('click', export_xls);
+        $('set_color_red').addEventListener('click', function() { set_visible_sample_color('R'); });
+        $('set_color_green').addEventListener('click', function() { set_visible_sample_color('G'); });
+        $('set_color_blue').addEventListener('click', function() { set_visible_sample_color('B'); });
+        $('show_numbers').addEventListener('click', function() { set_show_numbers(); });        
+        $('filter_do').addEventListener('click', filter_do);        
+        $('filter_clear').addEventListener('click', filter_clear);
+        $('filter_text').addEventListener('keypress', function (e) { 
+            var key = e.which || e.keyCode; 
+            if (key === 13) { filter_do(); }
+        });
         $('igv_button').addEventListener('click', trigger_igv);
         $('blacklist_button').addEventListener('click', blacklist_variant);
         $('seen_button').addEventListener('click', mark_seen_variant);
         $('bplot_button').addEventListener('click', show_barplot);
+        $('star_button').addEventListener('click', toggle_star);
+        $('special_button').addEventListener('click', toggle_special);
+
+        
 
     })()
 
 </script>
+<div id="tooltip" class="hidden"></div>
 </body>
